@@ -26,6 +26,8 @@ def runProcess(command):
 
     pipe = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr)
 
+    print(f"Process {pipe.pid} started...")
+
     return pipe.pid
 
 
@@ -38,11 +40,14 @@ def parse_args():
                         default="MB", help="Select memory units to log")
     parser.add_argument("-t", "--time", dest="time", type=float,
                         default=.25, help="Select time between measurements")
+    parser.add_argument("-m", "--monitor", dest="monitor", action="store_true",
+                        help="Output the current usage on every iteration")
     args = parser.parse_args()
 
     command = args.command
     units = args.units.upper()
     time = args.time
+    monitor = args.monitor
 
     if units + "B" in unitModifiers:
         units += "B"
@@ -50,11 +55,11 @@ def parse_args():
         print(f"{units} not a supported unit")
         exit(2)
 
-    return (command, units, time)
+    return (command, units, time, monitor)
 
 
 if __name__ == "__main__":
-    (command, units, time) = parse_args()
+    (command, units, time, monitor) = parse_args()
 
     processPid = runProcess(command)
 
@@ -64,14 +69,16 @@ if __name__ == "__main__":
     try:
         while True:
             mem = checkMemory(processPid, units)
-            # print(f"Current memory use is {mem}")
+            if monitor:
+                print(
+                    f"[#{iterations + 1}] Current memory use is {'%.3f' % mem} {units}")
             memoryUsages += mem
             iterations += 1
             sleep(time)
     except psutil.NoSuchProcess as e:
         print("-" * 72)
         print(
-            f"Process {processPid} & its children concluded with an average use of {'%.3f' % (memoryUsages / iterations)}{units}")
+            f"Process {processPid} & its children concluded with an average use of {'%.3f' % (memoryUsages / iterations)} {units}")
     except Exception as e:
         print("Unknown error occurred: ")
         print(e)
