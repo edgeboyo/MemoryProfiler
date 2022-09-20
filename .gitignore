@@ -1,0 +1,6 @@
+# Dotfiles
+.*
+!.gitignore
+
+# Python Cache
+__pycache__
