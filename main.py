@@ -41,7 +41,7 @@ def parse_args():
     args = parser.parse_args()
 
     command = args.command
-    units = args.units
+    units = args.units.upper()
     time = args.time
 
     if units + "B" in unitModifiers:
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     except psutil.NoSuchProcess as e:
         print("-" * 72)
         print(
-            f"Process {processPid} concluded with an average use of {'%.3f' % (memoryUsages / iterations)}{units}")
+            f"Process {processPid} & its children concluded with an average use of {'%.3f' % (memoryUsages / iterations)}{units}")
     except Exception as e:
         print("Unknown error occurred: ")
         print(e)
