@@ -24,7 +24,8 @@ def runProcess(command):
     import sys
     import subprocess
 
-    pipe = subprocess.Popen(command, stdout=sys.stdout, stderr=sys.stderr)
+    pipe = subprocess.Popen(command, stdout=sys.stdout,
+                            stderr=sys.stderr, shell=True)
 
     print(f"Process {pipe.pid} started...")
 
